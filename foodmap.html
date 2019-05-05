@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>Select Zipcode in Surprise, AZ</head>
+<script src="http://maps.googleapis.com/maps/api/js?sensor=false&key=AIzaSyARxs_0QWBQzZ-7tnFIkcz6Tzh5Fr1I0xg"></script>
+<script src="Restaurants_Surprise.js"></script>
+<select id="selectzipcode"onchange="showbsdata()">
+<option value="select">select</option>
+</select><div id="bsdata"></div>
+<div id="map" style="width:1024px; height:768px"></div>
+<script>
+
+var unique= [];
+        bsdata.forEach(element => {
+            if(!unique.includes(element.postal_code)){
+              unique.push(element.postal_code)
+          }
+        });        
+      var Dropdown = document.getElementById('selectzipcode');
+      var opt = null;
+      for(i = 0; i<unique.length; i++) { 
+        opt = document.createElement('option');
+        opt.value = unique[i];
+        opt.innerHTML = unique[i];
+        Dropdown.appendChild(opt);
+        }
+        var filteredbsdata = [];    
+        var showbsdata = function(){
+        var selectzipcode = Dropdown.options[Dropdown.selectedIndex].value;
+        //console.log("selectzipcode"+selectzipcode);
+        bsdata.forEach(item =>{
+            if (item.postal_code == selectzipcode){
+                filteredbsdata.push(item)
+            };
+})
+
+
+    init(filteredbsdata)
+  filteredbsdata = [];
+}
+
+var map;
+var markers =[];
+
+var init =function (filteredbsdata) {   
+//     console.log("filteredbsdata");
+//     console.log(filteredbsdata);
+// console.log(filteredbsdata[0].latitude);
+var lat_sum = 0;
+for (i = 0; i < filteredbsdata.length; i++) { 
+    lat_sum = filteredbsdata[i].latitude + lat_sum;
+}
+var latcenter = lat_sum/filteredbsdata.length
+
+var lng_sum = 0;
+for (i = 0; i < filteredbsdata.length; i++) { 
+    lng_sum = filteredbsdata[i].longitude + lng_sum;
+}
+var lngcenter = lng_sum/filteredbsdata.length
+
+    var myLatLng = new google.maps.LatLng(latcenter,lngcenter);
+    var myOptions = {
+            zoom: 13,
+            center: myLatLng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+  
+    map = new google.maps.Map(document.getElementById('map'), myOptions);
+    filteredbsdata.forEach(function(item){
+        if (item.categories.includes("Burgers")){   
+        var icon = { 
+                url:"../yelp_dataset/icons/burger.png",
+                scaledSize: new google.maps.Size(Math.log(item.review_count)*7, Math.log(item.review_count)*7),
+            }}
+            else if (item.categories.includes("Pizza")){
+                var icon = { 
+                url:"../yelp_dataset/icons/pizza.png",
+                scaledSize: new google.maps.Size(Math.log(item.review_count)*7, Math.log(item.review_count)*7),
+            }}
+            else if (item.categories.includes("Mexican")){
+                var icon = { 
+                url:"../yelp_dataset/icons/taco.png",
+                scaledSize: new google.maps.Size(Math.log(item.review_count)*7, Math.log(item.review_count)*7),
+            }}
+            else if (item.categories.includes("Sushi")){
+                var icon = { 
+                url:"../yelp_dataset/icons/sushi.png",
+                scaledSize: new google.maps.Size(Math.log(item.review_count)*7, Math.log(item.review_count)*7),
+            }}
+            else if (item.categories.includes("Salad")){
+                var icon = { 
+                url:"../yelp_dataset/icons/salad.png",
+                scaledSize: new google.maps.Size(Math.log(item.review_count)*7, Math.log(item.review_count)*7),
+            }}
+            else if (item.categories.includes("Bars")){
+                var icon = { 
+                url:"../yelp_dataset/icons/bar.jpg",
+                scaledSize: new google.maps.Size(Math.log(item.review_count)*7, Math.log(item.review_count)*7),
+            }}
+            else if (item.categories.includes("Noodles")){
+                var icon = { 
+                url:"../yelp_dataset/icons/noolde.png",
+                scaledSize: new google.maps.Size(Math.log(item.review_count)*7, Math.log(item.review_count)*7),
+            }}
+            else if (item.categories.includes("Coffee")){
+                var icon = { 
+                url:"../yelp_dataset/icons/coffee.png",
+                scaledSize: new google.maps.Size(Math.log(item.review_count)*7, Math.log(item.review_count)*7),
+            }}
+            else if (item.categories.includes("Sandwich")){
+                var icon = { 
+                url:"../yelp_dataset/icons/sandwich.png",
+                scaledSize: new google.maps.Size(Math.log(item.review_count)*7, Math.log(item.review_count)*7),
+            }}
+            else if (item.categories.includes("Ice Cream")){
+                var icon = { 
+                url:"../yelp_dataset/icons/icecream.jpg",
+                scaledSize: new google.maps.Size(Math.log(item.review_count)*7, Math.log(item.review_count)*7),
+            }}
+            else {
+                var icon = { 
+                url:"../yelp_dataset/icons/other.png",
+                scaledSize: new google.maps.Size(Math.log(item.review_count)*7, Math.log(item.review_count)*7),
+                }
+
+            }
+            
+        var lat  = item.latitude;
+        var long = item.longitude;
+        var latlng = new google.maps.LatLng(lat,long)
+        var marker = new google.maps.Marker({
+            opacity:item.star/5,
+            position : latlng,
+            map : map,
+            icon : icon,
+            title : 
+            item.name
+            +"\n"+"Star: "+item.star
+            +"\n"+"Reviews: "+item.review_count
+            +"\n"+"Categories: "+item.categories
+            +"\n"+"Last Checkin: "+item.last_checkin_time
+        });
+        markers.push(marker);
+
+
+    });
+
+}   
+
+</script>
+</html>
